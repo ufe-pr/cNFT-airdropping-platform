@@ -23,7 +23,7 @@ type Responses = {
 //     network?:string
 // };
 
-const shyftClient = new ShyftSdk({ apiKey: process.env.NEXT_SHYFT_API_KEY ?? '', network: Network.Mainnet });
+const shyftClient = new ShyftSdk({ apiKey: process.env.NEXT_SHYFT_API_KEY ?? '', network: Network.Devnet });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<Responses>) {
     if (req.method === 'POST') {

@@ -11,12 +11,8 @@ type Responses = {
     message: string;
     result: {};
 };
-type ShyftArrayResultResponse = {
-    success: boolean;
-    message?: string;
-    result: object[];
-};
-const shyftClient = new ShyftSdk({ apiKey: process.env.NEXT_SHYFT_API_KEY ?? '', network: Network.Mainnet });
+
+const shyftClient = new ShyftSdk({ apiKey: process.env.NEXT_SHYFT_API_KEY ?? '', network: Network.Devnet });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<Responses>) {
     if (req.method === 'POST') {
@@ -29,15 +25,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         try {
             console.log('------------Update Mints Called--------------');
             //console.log(req.body);
-            var reference_address: string = '';
-            var addresses_to_monitor: string[] = [];
-            var network: string = '';
+            let reference_address: string;
+            let addresses_to_monitor: string[];
+            let network: string;
 
             reference_address = typeof req.body.reference_address === 'string' ? req.body.reference_address : '';
             addresses_to_monitor = Array.isArray(req.body.create_callbacks_on) ? req.body.create_callbacks_on : [];
             network = typeof req.body.network === 'string' ? req.body.network : 'mainnet-beta';
 
-            var shyftNetwork: Network = Network.Mainnet;
+            let shyftNetwork: Network;
             if (network === 'mainnet-beta') shyftNetwork = Network.Mainnet;
             else if (network === 'devnet') shyftNetwork = Network.Devnet;
             else if (network === 'testnet') shyftNetwork = Network.Testnet;
@@ -47,27 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             // console.log("addresses_to_monitor: ",addresses_to_monitor);
 
             if (reference_address && addresses_to_monitor.length && network) {
-                // console.dir(addresses_to_monitor,{depth:null});
-
-                // const nftOwners = await shyftClient.nft.getOwners({network:shyftNetwork,mints:addresses_to_monitor});
-
-                // console.log(nftOwners);
-                // if(nftOwners.length === 0)
-                //     throw new Error('NO_NFT_DATA');
-
-                // const allOwners:object[] = nftOwners;
-                // // const allOwners:object[] = [];
-                // for(var i = 0; i < allOwners.length; i++)
-                // {
-                //     const eachOwner:any = allOwners[i];
-                //     //fetch NFT metadata here
-                //     const insertToDb = await supabase.from('monitor_mints').upsert({
-                //         mint_address: eachOwner.nft_address,
-                //         current_holder: eachOwner.owner
-                //     });
-                //     if (insertToDb.error !== null)
-                //         throw new Error('INSERT_TO_DB_FAILED');
-                // }
+                
                 const { error } = await supabase.from('monitor_mints').delete().gte('id', -1);
 
                 for (var i = 0; i < addresses_to_monitor.length; i++) {
